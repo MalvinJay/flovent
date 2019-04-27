@@ -4,46 +4,38 @@
     fluid
     grid-list-xl>
     <v-layout wrap>
-      <v-flex sm6 xs12 md6 lg3>
+      <v-flex sm6 xs12 md6 lg4>
         <material-stats-card
           color="green"
-          icon="mdi-store"
-          title="Purchases"
-          :value="purch"
+          icon="mdi-check"
+          title="Successful Purchases"
+          :value="successfulPurch"
         />
       </v-flex>
-      <v-flex sm6 xs12 md6 lg3>
+      <v-flex sm6 xs12 md6 lg4>
         <material-stats-card
           color="red"
           icon="mdi-information-outline"
-          title="Successful"
-          :value="successfulPurchses"
+          title="Unsuccessful Purchases"
+          :value="unsuccessfulPurch"
         />
       </v-flex>
-      <v-flex sm6 xs12 md6 lg3>
+      <v-flex sm6 xs12 md6 lg4>
         <material-stats-card
           color="orange"
           icon="mdi-content-copy"
           title="Products"
           :value="prod"
-          
           sub-text-color="text-primary"
         />
-      </v-flex>      
-      <v-flex sm6 xs12 md6 lg3>
-        <material-stats-card
-          color="info"
-          icon="mdi-directions-fork"
-          title="Others "
-          value="-"
-        />
-      </v-flex>
-      <v-flex
-      >
+      </v-flex>  
+      <v-flex>
         <material-card
           color="orange"
           title="Purchases Stats"
-          text="All purchases made this month"
+          text="All purchases made"
+          :filter="true"
+          page="dashboard"
         >
           <v-data-table
             :headers="headers"
@@ -65,12 +57,14 @@
               slot-scope="{ index, item }"
             >
               <td>{{ index + 1 }}</td>
-              <td>{{ item.product.name }}</td>
-              <td>{{ item.product.code }}</td>
+              <td>{{ item.product.name }} </td>
+              <!-- <td>{{ item.product.code }}</td> -->
               <td class="text-xs-right">GH¢ {{ item.product.unit_price }}</td>
-              <td class="text-xs-right">{{ item.product.quantity }}</td>
+              <td class="text-xs-right">{{ item.previous_quantity }}</td>
+              <td class="text-xs-right">{{ item.current_quantity }}</td>
               <td class="text-xs-right">{{ item.reference }}</td>
-              <td class="text-xs-right">{{ item.status }}</td>
+              <td class="text-xs-left">{{ item.status }}</td>
+              <td class="text-xs-left">{{ item.created_at | moment("MMMM Do YYYY, hh:mm a")}}</td>
             </template>
           </v-data-table>
         </material-card>
@@ -166,14 +160,14 @@ export default {
         },
         {
           sortable: false,
-          text: 'Name',
+          text: 'Product',
           value: 'name'
         },
-        {
-          sortable: false,
-          text: 'Code',
-          value: 'code'
-        },        
+        // {
+        //   sortable: false,
+        //   text: 'Code',
+        //   value: 'code'
+        // },        
         {
           sortable: false,
           text: 'Amount',
@@ -182,8 +176,14 @@ export default {
         },
         {
           sortable: false,
-          text: 'Quantity Left',
-          value: 'quantity',
+          text: 'Quantity Before',
+          value: 'previous_quantity',
+          align: 'right'
+        },
+        {
+          sortable: false,
+          text: 'Quantity After',
+          value: 'current_quantity',
           align: 'right'
         },
         {
@@ -196,8 +196,14 @@ export default {
           sortable: false,
           text: 'Status',
           value: 'status',
-          align: 'right'
-        }        
+          align: 'left'
+        },
+        {
+          sortable: false,
+          text: 'Date',
+          value: 'date',
+          align: 'left'
+        }                
       ],
       items: [
         {
@@ -238,8 +244,8 @@ export default {
       prod: '0'
     }
   },
-  mounted(){
-    this.$store.dispatch('getProducts').then((response) =>{
+  mounted() {
+    this.$store.dispatch('getProducts').then((response) => {
       this.prod = this.productsMeta.totalCount.toString()
 
     })
@@ -278,7 +284,26 @@ export default {
     },
     loading(){
       return this.purchaseState === 'LOADING'
-    }
+    },
+    successfulPurch() {
+      let sucess = 0;
+      this.purchases.map(el=> {
+        if(el.status === 'paid'){
+          sucess++;
+        }
+      })
+      return sucess
+    },
+    unsuccessfulPurch() {
+      let unsuccessful = 0;
+      this.purchases.map(el=> {
+        if(el.status === 'unknown'){
+          unsuccessful++;
+        }
+      })
+      return unsuccessful
+    },
+
   }
 }
 </script>

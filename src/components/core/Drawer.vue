@@ -9,10 +9,10 @@
     mobile-break-point="991"
     width="260"
   >
-    <v-img
+    <!-- <v-img
       :src="image"
       height="100%"
-    >
+    > -->
       <v-layout
         class="fill-height"
         tag="v-list"
@@ -29,7 +29,7 @@
             />
           </v-list-tile-avatar>
           <v-list-tile-title class="title">
-            FlopayVentory
+            FloVent
           </v-list-tile-title>
         </v-list-tile>
         <v-divider/>
@@ -55,8 +55,9 @@
             <span>Logout</span>
           </v-list-tile-title>
         </v-list-tile>
+        
       </v-layout>
-    </v-img>
+    <!-- </v-img> -->
   </v-navigation-drawer>
 </template>
 
@@ -91,11 +92,11 @@ export default {
         icon: 'mdi-history',
         text: 'Purchases'
       },      
-      // {
-      //   to: '/typography',
-      //   icon: 'mdi-format-font',
-      //   text: 'Typography'
-      // },
+      {
+        to: '/agents',
+        icon: 'mdi-account',
+        text: 'Agents'
+      },
       // {
       //   to: '/icons',
       //   icon: 'mdi-chart-bubble',

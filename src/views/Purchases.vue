@@ -4,30 +4,26 @@
       <v-snackbar :color="color" :top="true" :right="true" v-model="snackbar" dark>
           <div>{{message}}</div>
           <v-icon size="16" @click="snackbar = false">
-              mdi-close-circle
+            mdi-close-circle
           </v-icon>
-      </v-snackbar>       
-
+      </v-snackbar>
       <v-flex md12>
-        <material-card color="green" title="Purchases" text="A list of purchases and corresponding histories">     
-          <!-- Table -->
+        <material-card color="green" title="Purchases" text="A list of purchases and corresponding histories" :filter="true" page="purchases">     
           <v-data-table :headers="headers" :items="filteredProducts" :loading="loading">
             <template slot="headerCell" slot-scope="{ header }">
               <span class="subheading font-weight-light text-success text--darken-3" v-text="header.text"/>
             </template>
             <v-progress-linear slot="progress" color="blue" indeterminate></v-progress-linear>
             <template slot="items" slot-scope="props">
-                <tr>
-              <!-- <tr @click="props.expanded = !props.expanded"> -->
-              <!-- <tr @click="clickRow(props.item.id)"> -->
+              <tr>
                 <td>{{ props.item.reference }}</td>
-                <td>{{ props.item.code }}</td>
+                <td>{{ props.item.status }}</td>
                 <td>{{ props.item.previous_quantity }}</td>
                 <td>{{ props.item.current_quantity }}</td>
-                <td>{{props.item.remarks || 'N/A'}}</td>
-                <td>{{props.item.customer_number || 'N/A'}}</td>
-                <td>{{props.item.product.name || 'N/A'}}</td>
-                <td>{{props.item.created_at | moment("dddd, MMMM Do YYYY, hh:mm a")}}</td>
+                <!-- <td>{{ props.item.remarks || 'N/A'}}</td> -->
+                <td>{{ props.item.customer_number || 'N/A'}}</td>
+                <td>{{ props.item.product.name || 'N/A'}}</td>
+                <td>{{ props.item.created_at | moment("dddd, MMMM Do YYYY, hh:mm a")}}</td>
               </tr>
             </template>
             <template slot="expand" slot-scope="props">
@@ -104,8 +100,8 @@ export default {
         },
         {
             sortable: false,
-            text: 'Code',
-            value: 'code'
+            text: 'Status',
+            value: 'status'
         },
         {
             sortable: false,
@@ -117,11 +113,11 @@ export default {
             text: 'Current Qty',
             value: 'current_quantity'
         },
-        {
-            sortable: false,
-            text: 'Remarks',
-            value: 'remarks',
-        },
+        // {
+        //     sortable: false,
+        //     text: 'Remarks',
+        //     value: 'remarks',
+        // },
         {
             sortable: false,
             text: 'Customer No.',

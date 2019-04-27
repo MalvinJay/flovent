@@ -15,3 +15,42 @@
 @import "material-dashboard/alerts";
 @import "material-dashboard/fixed-plugin";
 @import "material-dashboard/dropdown";
+@import "material-dashboard/general";
+
+.v-menu__content {
+    // top: 200px!important;
+    border-radius: 2px;
+}
+
+.v-input--selection-controls, .v-input__slot {
+    padding: 0!important;
+    margin: 0!important;
+
+    label {
+        font-size: 13px;
+    }
+}
+
+.v-text-field {
+    padding-top: 5px!important;
+}
+
+.v-date-picker-table--date {
+    .v-btn {
+        width: 20px!important;
+        padding: 10px!important;
+    }
+} 
+
+.v-input__control {
+    width: 100%;
+}
+
+.v-input--radio-group__input {
+    display: flex!important;
+    flex-direction: row;
+}
+
+.v-progress-linear {
+    height: 2px!important;
+}

@@ -2,10 +2,10 @@
   <v-container fill-height fluid grid-list-xl>
     <v-layout justify-center wrap>
       <v-snackbar :color="color" :top="true" :right="true" v-model="snackbar" dark>
-          <div>{{message}}</div>
-          <v-icon size="16" @click="snackbar = false">
-              mdi-close-circle
-          </v-icon>
+        <div>{{message}}</div>
+        <v-icon size="16" @click="snackbar = false">
+            mdi-close-circle
+        </v-icon>
       </v-snackbar>
 
     <!-- Confirm Delete -->
@@ -28,12 +28,12 @@
 
     <!-- Save a new Item or Edit an item -->
       <v-flex md12>
-        <material-card color="green" title="Products" text="A list of products">
+        <material-card color="green" title="Products" text="A list of products" :filter="true" page="products">
           <v-dialog v-model="dialog" max-width="500px">
             <v-btn slot="activator" color="green" class="mb-2 add" dark fab icon light round>
               <v-icon>mdi-plus</v-icon>
             </v-btn>
-            <v-card>
+           <v-card>
               <v-card-title>
                 <span class="headline">{{ formTitle }}</span>
               </v-card-title>
@@ -47,7 +47,7 @@
                       <v-text-field v-model="editedItem.quantity" label="Quantity" type="number"></v-text-field>
                     </v-flex>
                     <v-flex xs12>
-                      <v-text-field v-model="editedItem.unit_price" label="Unit Price"></v-text-field>
+                      <v-text-field v-model="editedItem.unit_price" label="Unit Price" type="number"></v-text-field>
                     </v-flex>
                     <v-flex xs12>
                       <v-text-field v-model="editedItem.description" label="Description"></v-text-field>
@@ -70,7 +70,7 @@
               <span class="subheading font-weight-light text-success text--darken-3" v-text="header.text"/>
             </template>
 
-            <v-progress-linear slot="progress" color="green" indeterminate></v-progress-linear>
+            <v-progress-linear v-slot:progress color="blue" indeterminate></v-progress-linear>
 
             <template slot="items" slot-scope="props">
               <td>{{ props.item.name }}</td>
@@ -85,8 +85,6 @@
             </template>
           </v-data-table>
         </material-card>
-      </v-flex>
-      <v-flex md12>       
       </v-flex>
     </v-layout>
   </v-container>

@@ -69,7 +69,7 @@
 
 @mixin card-header-color($color, $shadow-color, $color-400, $color-600) {
   .v-card.#{$color} {
-    background: linear-gradient(60deg, $color-400, $color-600) !important;
+    background: linear-gradient(60deg, $color-400, $color-600) !important;  
     @include shadow-big-color($shadow-color);
   }
 }

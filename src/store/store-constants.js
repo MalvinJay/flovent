@@ -1,6 +1,6 @@
 export const GET_BASE_URI = 'https://inventroy-box.herokuapp.com/'
-// export const GET_BASE_URI = 'https://d1cdf61f.ngrok.io/'
-
+// export const GET_BASE_URI = 'https://b9101ba5.ngrok.io/'
+    
 // user
 export const AUTH_REQUEST = 'getToken'
 export const GET_CLIENT = 'getClient'
@@ -29,7 +29,32 @@ export const DELETE_PRODUCT = 'deleteProduct'
 export const PURCHASES_FETCH = 'getPurchases'
 export const SET_PURCHASES = 'setPurchases'
 export const SET_PURCHASES_STATE = 'setPurchasesState'
+export const SET_SUCCESSFUL_PURCHASES = 'setSuccessfulPurchase'
 export const SET_PURCHASES_META = 'setPurchasesMeta'
 export const CREATE_PURCHASE = 'createPurchase'
 export const UPDATE_PURCHASE = 'updatePurchase'
 export const DELETE_PURCHASE = 'deletePurchase'
+
+// report
+export const GET_FIELDS = 'getReportFields'
+export const SET_REPORT_FIELDS = 'setReportFields'
+export const SET_REPORT_STATE = 'setReportState'
+export const SET_REPORT_FIELDS_STATE = 'setReportFieldsState'
+export const GENERATE_REPORTS = 'generateReports'
+export const DOWNLOAD_REPORT = 'downloadReport'
+export const GET_REPORT = 'getReport'
+export const SET_DOWNLOAD_LINK = 'setDownloadLink'
+export const GET_BUCKET_FILE = 'getBucketFile'
+export const SET_AWS_FILE = 'setAwsFile'
+export const AWS_BUCKET = 'inventoribucket'
+export const ACCESS_KEY_ID = 'AKIATCUGATDXX574WJN5'
+export const SECRET_ACCESS_KEY = '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'
+
+// agents
+export const AGENTS_FETCH = 'getAgents'
+export const SET_AGENTS = 'setAgents'
+export const SET_AGENTS_STATE = 'setAgentsState'
+export const SET_AGENTS_META = 'setAgentsMeta'
+export const CREATE_AGENT = 'createAgent'
+export const UPDATE_AGENT = 'updateAgent'
+export const DELETE_AGENT = 'deleteAgent'

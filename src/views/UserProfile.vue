@@ -128,7 +128,7 @@
             >
           </v-avatar>
           <v-card-text class="text-xs-center">
-            <h6 class="category text-gray font-weight-thin mb-3">CEO / CO-FOUNDER</h6>
+            <h6 class="category text-gray font-weight-thin mb-3">ADMIN</h6>
             <h4 class="card-title font-weight-light">Alec Thompson</h4>
             <p class="card-description font-weight-light">Don't be scared of the truth because we need to restart the human foundation in truth And I love you like Kanye loves Kanye I love Rick Owens’ bed design but the back is...</p>
             <v-btn
@@ -144,7 +144,20 @@
 </template>
 
 <script>
+import { mapGetters } from 'vuex'
 export default {
-  //
+  data(){
+    return {
+
+    }
+  },
+  mounted(){
+    console.log('User:', this.user)
+  },
+  computed: {
+    ...mapGetters({
+      user: 'user',
+    }),  
+  },  
 }
 </script>

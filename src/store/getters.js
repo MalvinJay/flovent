@@ -14,5 +14,16 @@ export default {
   purchases: state => state.purchases.data,
   purchasesState: state => state.purchases.state,
   purchasesMeta: state => state.purchases.meta,
-  successfulPurchases: state => state.purchases.successful
+  successfulPurchases: state => state.purchases.successful,
+
+  // reports
+  fields: state => state.fields.data,
+  fieldsState: state => state.fields.state,
+  downloadLink: state => state.fields.link,
+  awsFile: state => state.fields.aws_file,
+
+  // agents
+  agents: state => state.agents.data,
+  agentsState: state => state.agents.state,
+  agentsMeta: state => state.agents.meta,
 }

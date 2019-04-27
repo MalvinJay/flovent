@@ -30,6 +30,7 @@ const Client = () => import('@/pages/Client')
 const Login = () => import('@/views/Login')
 const Dashboard = () => import('@/views/Dashboard')
 const Products = () => import('@/views/TableList')
+const Agents = () => import('@/views/Agents')
 const Purchases = () => import('@/views/Purchases')
 const PurchasesDetails = () => import('@/views/PurchaseDetails')
 const Icons = () => import('@/views/Icons')
@@ -63,6 +64,11 @@ const router = new Router({
           name: 'Product',
           component: Products
         },
+        {
+          path: '/agents',
+          name: 'Agents',
+          component: Agents
+        },        
         {
           path: '/purchases',
           name: 'Purchases',

@@ -3,10 +3,14 @@ export default {
   // User
   user: {
     data: {},
-    token: '',
+    token: localStorage.getItem('token'),
   },
-  userdata: {},
-  client: {},
+  userdata: {
+
+  },
+  client: {
+
+  },
   logIn: localStorage.getItem('login'),
   test: false,
   permissions: {
@@ -14,7 +18,9 @@ export default {
   },
   pageLoading: false,
   pageSize: 12,
-  balance: {},
+  balance: {
+    
+  },
 
   // Product
   products: {
@@ -29,5 +35,22 @@ export default {
     state: 'LOADING',
     meta: {},
     successful: '0'
-  }
+  },
+
+  // Reports
+  fields: {
+    data: [],
+    state: 'Loading',
+    link: '',
+    token: '',
+    job_id: null,
+    aws_file: ''
+  },
+
+  // Agents
+  agents: {
+    data: [],
+    state: 'LOADING',
+    meta: {}
+  },  
 }
