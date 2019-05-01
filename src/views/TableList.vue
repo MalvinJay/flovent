@@ -29,43 +29,62 @@
     <!-- Save a new Item or Edit an item -->
       <v-flex md12>
         <material-card color="green" title="Products" text="A list of products" :filter="true" page="products">
-          <v-dialog v-model="dialog" max-width="500px">
-            <v-btn slot="activator" color="green" class="mb-2 add" dark fab icon light round>
-              <v-icon>mdi-plus</v-icon>
-            </v-btn>
-           <v-card>
-              <v-card-title>
-                <span class="headline">{{ formTitle }}</span>
-              </v-card-title>
-              <v-card-text>
-                <v-container grid-list-md class="pa-0">
-                  <v-layout wrap>
-                    <v-flex xs12>
-                      <v-text-field v-model="editedItem.name" label="Product Name"></v-text-field>
-                    </v-flex>
-                    <v-flex xs12>
-                      <v-text-field v-model="editedItem.quantity" label="Quantity" type="number"></v-text-field>
-                    </v-flex>
-                    <v-flex xs12>
-                      <v-text-field v-model="editedItem.unit_price" label="Unit Price" type="number"></v-text-field>
-                    </v-flex>
-                    <v-flex xs12>
-                      <v-text-field v-model="editedItem.description" label="Description"></v-text-field>
-                    </v-flex>
-                  </v-layout>
-                </v-container>
-              </v-card-text>
+          <v-card-title class="pa-0 pb-4">
+            <v-text-field
+              v-model="search"
+              icon="mdi-meteor"
+              label="Search"
+              single-line
+              hide-details
+            ></v-text-field>
+            <v-spacer></v-spacer>
 
-              <v-card-actions>
-                <v-spacer></v-spacer>
-                <v-btn color="green darken-1" outline flat @click="close">Cancel</v-btn>
-                <v-btn color="green darken-1" @click="save" :loading="loading">Save</v-btn>
-              </v-card-actions>
-            </v-card>
-          </v-dialog> 
-            
+            <v-dialog v-model="dialog" max-width="500px">
+              <v-btn slot="activator" color="green" class="mb-2 add" dark fab icon light round>
+                <v-icon>mdi-plus</v-icon>
+              </v-btn>
+              <v-card>
+                <v-card-title>
+                  <span class="headline">{{ formTitle }}</span>
+                </v-card-title>
+
+                <v-card-text>
+                  <v-container grid-list-md class="pa-0">
+                    <v-layout wrap>
+                      <v-flex xs12>
+                        <v-text-field v-model="editedItem.name" label="Product Name"></v-text-field>
+                      </v-flex>
+                      <v-flex xs12>
+                        <v-text-field v-model="editedItem.quantity" label="Quantity" type="number"></v-text-field>
+                      </v-flex>
+                      <v-flex xs12>
+                        <v-text-field v-model="editedItem.unit_price" label="Unit Price" type="number"></v-text-field>
+                      </v-flex>
+                      <v-flex xs12>
+                        <v-text-field v-model="editedItem.description" label="Description"></v-text-field>
+                      </v-flex>
+                    </v-layout>
+                  </v-container>
+                </v-card-text>
+                
+                <v-card-actions>
+                  <v-spacer></v-spacer>
+                  <v-btn color="green darken-1" outline flat @click="close">Cancel</v-btn>
+                  <v-btn color="green darken-1" @click="save" :loading="loading">Save</v-btn>
+                </v-card-actions>
+              </v-card>
+            </v-dialog>             
+          </v-card-title>
+
           <!-- Table -->
-          <v-data-table :headers="headers" :items="filteredProducts" :loading="loading">
+          <v-data-table 
+            :headers="headers" 
+            :items="filteredProducts" 
+            :loading="loading"
+            :search="search"
+            hide-actions
+            :pagination.sync="pagination"   
+          >
             <template slot="headerCell" slot-scope="{ header }">
               <span class="subheading font-weight-light text-success text--darken-3" v-text="header.text"/>
             </template>
@@ -84,6 +103,15 @@
               </td>
             </template>
           </v-data-table>
+          <div class="text-xs-right pt-2">
+            <v-pagination 
+              v-model="pagination.page" 
+              :length="pages"
+              prev-icon="mdi-menu-left"
+              next-icon="mdi-menu-right"               
+              >
+              </v-pagination>
+          </div>          
         </material-card>
       </v-flex>
     </v-layout>
@@ -95,6 +123,7 @@ import { mapGetters } from 'vuex'
 import moment from 'moment'
 export default {
   data: () => ({ 
+    pagination: {},
     snackbar: false,
     message: 'This is a temp message',
     color: 'success',
@@ -109,32 +138,26 @@ export default {
     dialog1: false,
     headers: [
       {
-        sortable: false,
         text: 'Name',
         value: 'name'
       },
       {
-        sortable: false,
         text: 'Code',
         value: 'code'
       },      
       {
-        sortable: false,
         text: 'Quantity',
         value: 'quantity'
       },
       {
-        sortable: false,
         text: 'Unit Price',
         value: 'unit_price'
       },
       {
-        sortable: false,
         text: 'Description',
         value: 'description',
       },
       {
-        sortable: false,
         text: '',
         value: ''
       }
@@ -157,7 +180,8 @@ export default {
       currency: 'GHs'
     },
     confirm: false,
-    it: ''
+    it: '',
+    search: ''
   }),
 
   created(){
@@ -183,7 +207,15 @@ export default {
 
     formTitle () {
       return this.editedIndex === -1 ? 'New Item' : 'Edit Item'
-    }
+    },
+
+    pages () {
+      if (this.pagination.rowsPerPage == null ||
+        this.pagination.totalItems == null
+      ) return 0
+
+      return Math.ceil(this.pagination.totalItems / this.pagination.rowsPerPage)
+    }    
   },
 
   watch: {
@@ -324,9 +356,9 @@ export default {
     margin-right: 20px;
 }
 
-.v-dialog__container{
-  width: 100%;
-}
+// .v-dialog__container{
+//   width: 100%;
+// }
 
  .v-progress-circular {
     margin: 1rem

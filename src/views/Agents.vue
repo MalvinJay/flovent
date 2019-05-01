@@ -29,49 +29,66 @@
     <!-- Save a new Agent or Edit an agent -->
       <v-flex md12>
         <material-card color="green" title="Agents" text="A list of agents" :filter="false" page="agents">
-          <v-dialog v-model="dialog" max-width="500px">
-            <v-btn slot="activator" color="green" class="mb-2 add" dark fab icon light round>
-              <v-icon>mdi-plus</v-icon>
-            </v-btn>
-            <v-card>
-              <v-card-title>
-                <span class="headline">{{ formTitle }}</span>
-              </v-card-title>
-              <v-card-text>
-                <v-container grid-list-md class="pa-0">
-                  <v-layout wrap>
-                    <v-flex xs12>
-                      <v-text-field v-model="editedItem.first_name" label="First Name"></v-text-field>
-                    </v-flex>
-                    <v-flex xs12>
-                      <v-text-field v-model="editedItem.last_name" label="Last Name"></v-text-field>
-                    </v-flex>   
-                    <v-flex xs12>
-                      <v-text-field v-model="editedItem.username" label="Username"></v-text-field>
-                    </v-flex>                                     
-                    <v-flex xs12>
-                      <v-text-field v-model="editedItem.phone_number" label="Phone Number"></v-text-field>
-                    </v-flex>
-                    <v-flex xs12>
-                      <v-text-field v-model="editedItem.email" label="Email"></v-text-field>
-                    </v-flex>
-                    <!-- <v-flex xs12>
-                      <v-text-field v-model="editedItem.description" label="Description"></v-text-field>
-                    </v-flex> -->
-                  </v-layout>
-                </v-container>
-              </v-card-text>
+          <v-card-title class="pa-0 pb-4">
+            <v-text-field
+              v-model="search"
+              icon="mdi-meteor"
+              label="Search"
+              single-line
+              hide-details
+            ></v-text-field>
+            <v-spacer></v-spacer>
 
-              <v-card-actions>
-                <v-spacer></v-spacer>
-                <v-btn color="green darken-1" outline flat @click="close">Cancel</v-btn>
-                <v-btn color="green darken-1" @click="save" :loading="loading">Save</v-btn>
-              </v-card-actions>
-            </v-card>
-          </v-dialog> 
-            
+            <v-dialog v-model="dialog" max-width="500px">
+              <v-btn slot="activator" color="green" class="mb-2 add" dark fab icon light round>
+                <v-icon>mdi-plus</v-icon>
+              </v-btn>
+              <v-card>
+                <v-card-title>
+                  <span class="headline">{{ formTitle }}</span>
+                </v-card-title>
+                <v-card-text>
+                  <v-container grid-list-md class="pa-0">
+                    <v-layout wrap>
+                      <v-flex xs12>
+                        <v-text-field v-model="editedItem.first_name" label="First Name"></v-text-field>
+                      </v-flex>
+                      <v-flex xs12>
+                        <v-text-field v-model="editedItem.last_name" label="Last Name"></v-text-field>
+                      </v-flex>   
+                      <v-flex xs12>
+                        <v-text-field v-model="editedItem.username" label="Username"></v-text-field>
+                      </v-flex>                                     
+                      <v-flex xs12>
+                        <v-text-field v-model="editedItem.phone_number" label="Phone Number"></v-text-field>
+                      </v-flex>
+                      <v-flex xs12>
+                        <v-text-field v-model="editedItem.email" label="Email"></v-text-field>
+                      </v-flex>
+                      <!-- <v-flex xs12>
+                        <v-text-field v-model="editedItem.description" label="Description"></v-text-field>
+                      </v-flex> -->
+                    </v-layout>
+                  </v-container>
+                </v-card-text>
+
+                <v-card-actions>
+                  <v-spacer></v-spacer>
+                  <v-btn color="green darken-1" outline flat @click="close">Cancel</v-btn>
+                  <v-btn color="green darken-1" @click="save" :loading="loading">Save</v-btn>
+                </v-card-actions>
+              </v-card>
+            </v-dialog>
+          </v-card-title>
+
           <!-- Table -->
-          <v-data-table :headers="headers" :items="filteredAgents" :loading="loading">
+          <v-data-table 
+            :headers="headers" 
+            :items="filteredAgents" 
+            :loading="loading"
+            hide-actions
+            :pagination.sync="pagination"
+          >
             <template slot="headerCell" slot-scope="{ header }">
               <span class="subheading font-weight-light text-success text--darken-3" v-text="header.text"/>
             </template>
@@ -83,13 +100,22 @@
               <td>{{ props.item.username }}</td>
               <td>{{ props.item.email }}</td>
               <td>{{ props.item.phone_number }}</td>
-              <td>{{ props.item.number_of_deliveries }}</td>
+              <td>{{ props.item.number_of_deliveries || 'N/A'}}</td>
               <td class="justify-center px-0">
                 <v-icon small class="mr-2" @click="editItem(props.item)">mdi-pencil</v-icon>
                 <v-icon small @click="clear(props.item.id)">mdi-delete</v-icon>          
               </td>
             </template>
           </v-data-table>
+          <div class="text-xs-right pt-2">
+            <v-pagination 
+              v-model="pagination.page" 
+              :length="pages"
+              prev-icon="mdi-menu-left"
+              next-icon="mdi-menu-right"               
+              >
+              </v-pagination>
+          </div>           
         </material-card>
       </v-flex>
       <v-flex md12>       
@@ -104,6 +130,7 @@ import moment from 'moment'
 export default {
     name: 'Agents',
   data: () => ({ 
+    pagination: {},
     snackbar: false,
     message: 'This is a temp message',
     color: 'success',
@@ -118,37 +145,26 @@ export default {
     dialog1: false,
     headers: [
       {
-        sortable: false,
         text: 'Name',
         value: 'name'
       },
       {
-        sortable: false,
         text: 'Username',
         value: 'username'
       },      
       {
-        sortable: false,
         text: 'Email',
         value: 'email'
       },
       {
-        sortable: false,
         text: 'Phone Number',
         value: 'phone_number'
       },      
       {
-        sortable: false,
         text: 'Number of Deliveries',
         value: 'number_of_deliveries'
       },
-      // {
-      //   sortable: false,
-      //   text: 'Description',
-      //   value: 'description',
-      // },
       {
-        sortable: false,
         text: '',
         value: ''
       }
@@ -171,7 +187,8 @@ export default {
       email: ""
     },
     confirm: false,
-    it: ''
+    it: '',
+    search: ''
   }),
 
   created() {
@@ -205,7 +222,15 @@ export default {
 
     formTitle () {
       return this.editedIndex === -1 ? 'New Agent' : 'Edit Agent'
-    }
+    },
+
+    pages () {
+      if (this.pagination.rowsPerPage == null ||
+        this.pagination.totalItems == null
+      ) return 0
+
+      return Math.ceil(this.pagination.totalItems / this.pagination.rowsPerPage)
+    }    
   },
 
   watch: {
@@ -349,9 +374,9 @@ export default {
     margin-right: 20px;
 }
 
-.v-dialog__container{
-  width: 100%;
-}
+// .v-dialog__container{
+//   width: 100%;
+// }
 
  .v-progress-circular {
     margin: 1rem

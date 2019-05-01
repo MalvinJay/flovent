@@ -34,6 +34,7 @@ export const SET_PURCHASES_META = 'setPurchasesMeta'
 export const CREATE_PURCHASE = 'createPurchase'
 export const UPDATE_PURCHASE = 'updatePurchase'
 export const DELETE_PURCHASE = 'deletePurchase'
+export const RESEND_WEBHOOK = 'sendHook'
 
 // report
 export const GET_FIELDS = 'getReportFields'

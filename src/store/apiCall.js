@@ -5,12 +5,12 @@ var axiosCall = (data) => {
     method: data.method === undefined ? 'POST' : data.method,
     url: data.url,
     headers: {
-      // 'client_key': data.token
       'client_key': localStorage.getItem('token')
     },
     data: data.data,
     params: data.parameters
   }
+  
   return axios(param)
 }
 

@@ -4,7 +4,7 @@
     fluid
     grid-list-xl>
     <v-layout wrap>
-      <v-flex sm6 xs12 md6 lg4>
+      <v-flex sm6 xs12 md3 lg3>
         <material-stats-card
           color="green"
           icon="mdi-check"
@@ -12,35 +12,59 @@
           :value="successfulPurch"
         />
       </v-flex>
-      <v-flex sm6 xs12 md6 lg4>
+      <v-flex sm6 xs12 md3 lg3>
         <material-stats-card
           color="red"
           icon="mdi-information-outline"
-          title="Unsuccessful Purchases"
-          :value="unsuccessfulPurch"
+          title="Failed Purchases"
+          :value="failedPurch"
         />
       </v-flex>
-      <v-flex sm6 xs12 md6 lg4>
+      <v-flex sm6 xs12 md3 lg3>
         <material-stats-card
           color="orange"
+          icon="mdi-dna"
+          title="Pending Purchases"
+          :value="pendingfulPurch"
+        />
+      </v-flex>      
+      <v-flex sm6 xs12 md3 lg3>
+        <material-stats-card
+          color="green"
           icon="mdi-content-copy"
           title="Products"
           :value="prod"
           sub-text-color="text-primary"
         />
-      </v-flex>  
+      </v-flex>
       <v-flex>
         <material-card
-          color="orange"
+          color="green"
           title="Purchases Stats"
           text="All purchases made"
           :filter="true"
           page="dashboard"
         >
+          <v-card-title class="pa-0 pb-4">
+            <v-text-field
+              v-model="search"
+              icon="mdi-meteor"
+              label="Search"
+              single-line
+              hide-details
+            ></v-text-field>
+            <v-spacer></v-spacer>     
+
+          </v-card-title>
+<!--             hide-actions
+            :pagination.sync="pagination"
+             -->
           <v-data-table
             :headers="headers"
             :items="filteredProducts"
             :loading="loading"
+            :search="search"
+ 
           >
             <v-progress-linear slot="progress" color="blue" indeterminate></v-progress-linear>
             <template
@@ -58,7 +82,6 @@
             >
               <td>{{ index + 1 }}</td>
               <td>{{ item.product.name }} </td>
-              <!-- <td>{{ item.product.code }}</td> -->
               <td class="text-xs-right">GH¢ {{ item.product.unit_price }}</td>
               <td class="text-xs-right">{{ item.previous_quantity }}</td>
               <td class="text-xs-right">{{ item.current_quantity }}</td>
@@ -67,6 +90,15 @@
               <td class="text-xs-left">{{ item.created_at | moment("MMMM Do YYYY, hh:mm a")}}</td>
             </template>
           </v-data-table>
+          <div class="text-xs-right pt-2">
+            <v-pagination 
+              v-model="pagination.page" 
+              :length="pages"
+              prev-icon="mdi-menu-left"
+              next-icon="mdi-menu-right"               
+              >
+              </v-pagination>
+          </div>          
         </material-card>
       </v-flex>
     </v-layout>
@@ -78,6 +110,7 @@ import { mapGetters } from 'vuex'
 export default {
   data () {
     return {
+      pagination: {},
       dailySalesChart: {
         data: {
           labels: ['M', 'T', 'W', 'T', 'F', 'S', 'S'],
@@ -159,80 +192,39 @@ export default {
           value: 'id'
         },
         {
-          sortable: false,
           text: 'Product',
           value: 'name'
-        },
-        // {
-        //   sortable: false,
-        //   text: 'Code',
-        //   value: 'code'
-        // },        
+        },       
         {
-          sortable: false,
           text: 'Amount',
           value: 'amount',
           align: 'right'
         },
         {
-          sortable: false,
           text: 'Quantity Before',
           value: 'previous_quantity',
           align: 'right'
         },
         {
-          sortable: false,
           text: 'Quantity After',
           value: 'current_quantity',
           align: 'right'
         },
         {
-          sortable: false,
           text: 'Reference',
           value: 'reference',
           align: 'right'
         },
         {
-          sortable: false,
           text: 'Status',
           value: 'status',
           align: 'left'
         },
         {
-          sortable: false,
           text: 'Date',
           value: 'date',
           align: 'left'
         }                
-      ],
-      items: [
-        {
-          name: 'Dakota Rice',
-          country: 'Niger',
-          city: 'Oud-Tunrhout',
-          salary: '$35,738'
-        },
-        {
-          name: 'Minerva Hooper',
-          country: 'Curaçao',
-          city: 'Sinaai-Waas',
-          salary: '$23,738'
-        }, {
-          name: 'Sage Rodriguez',
-          country: 'Netherlands',
-          city: 'Overland Park',
-          salary: '$56,142'
-        }, {
-          name: 'Philip Chanley',
-          country: 'Korea, South',
-          city: 'Gloucester',
-          salary: '$38,735'
-        }, {
-          name: 'Doris Greene',
-          country: 'Malawi',
-          city: 'Feldkirchen in Kārnten',
-          salary: '$63,542'
-        }
       ],
       tabs: 0,
       list: {
@@ -241,7 +233,8 @@ export default {
         2: false
       },
       purch: '0',
-      prod: '0'
+      prod: '0',
+      search: ''
     }
   },
   mounted() {
@@ -294,16 +287,31 @@ export default {
       })
       return sucess
     },
-    unsuccessfulPurch() {
-      let unsuccessful = 0;
+    failedPurch() {
+      let failed = 0;
       this.purchases.map(el=> {
-        if(el.status === 'unknown'){
-          unsuccessful++;
+        if(el.status === 'failed'){
+          failed++;
         }
       })
-      return unsuccessful
+      return failed
     },
+    pendingfulPurch() {
+      let pending = 0;
+      this.purchases.map(el=> {
+        if(el.status === 'pending'){
+          pending++;
+        }
+      })
+      return pending
+    },
+    pages () {
+      if (this.pagination.rowsPerPage == null ||
+        this.pagination.totalItems == null
+      ) return 0
 
+      return Math.ceil(this.pagination.totalItems / this.pagination.rowsPerPage)
+    }    
   }
 }
 </script>

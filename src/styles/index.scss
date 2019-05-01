@@ -18,7 +18,6 @@
 @import "material-dashboard/general";
 
 .v-menu__content {
-    // top: 200px!important;
     border-radius: 2px;
 }
 
@@ -54,3 +53,11 @@
 .v-progress-linear {
     height: 2px!important;
 }
+
+.d-flex {
+    display: flex;
+  }
+  
+  .justify-content-between {
+    justify-content: space-between;
+  }

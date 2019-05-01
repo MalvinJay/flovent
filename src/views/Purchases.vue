@@ -9,65 +9,77 @@
       </v-snackbar>
       <v-flex md12>
         <material-card color="green" title="Purchases" text="A list of purchases and corresponding histories" :filter="true" page="purchases">     
-          <v-data-table :headers="headers" :items="filteredProducts" :loading="loading">
+          <v-card-title class="pa-0 pb-4">
+            <v-text-field
+              v-model="search"
+              icon="mdi-meteor"
+              label="Search"
+              single-line
+              hide-details
+            >
+            </v-text-field>
+            <v-spacer></v-spacer>
+
+          </v-card-title>
+
+          <v-data-table 
+            :headers="headers" 
+            :items="filteredProducts" 
+            :loading="loading"
+            :search="search"
+            hide-actions
+            :pagination.sync="pagination"   
+            :expand="expand"        
+          >
             <template slot="headerCell" slot-scope="{ header }">
               <span class="subheading font-weight-light text-success text--darken-3" v-text="header.text"/>
             </template>
             <v-progress-linear slot="progress" color="blue" indeterminate></v-progress-linear>
             <template slot="items" slot-scope="props">
-              <tr>
+              <tr @click="props.expanded = !props.expanded">
                 <td>{{ props.item.reference }}</td>
                 <td>{{ props.item.status }}</td>
                 <td>{{ props.item.previous_quantity }}</td>
                 <td>{{ props.item.current_quantity }}</td>
-                <!-- <td>{{ props.item.remarks || 'N/A'}}</td> -->
                 <td>{{ props.item.customer_number || 'N/A'}}</td>
                 <td>{{ props.item.product.name || 'N/A'}}</td>
                 <td>{{ props.item.created_at | moment("dddd, MMMM Do YYYY, hh:mm a")}}</td>
+                <td class="justify-center px-0">
+                <!-- 
+                  <v-tooltip>
+                    <template v-slot:activator="{ on }">
+                      <i @click="resendHook(props.item.reference)" v-on="on" class="fas fa-redo-alt pa-2 cursor"></i>
+                    </template>
+                    <span>Resend Webhook</span>
+                  </v-tooltip> 
+                  -->
+                  <i v-if="props.item.status === 'pending'" @click="resendHook(props.item.reference)" class="fas fa-redo-alt pa-2 cursor"></i>
+                  <!-- <v-icon>fas fa-circle-notch fa-spin</v-icon> -->
+                  <!-- <i v-if="hook" class="fa-circle-notch fa-spin fas theme--light"></i> -->
+                </td>                
               </tr>
             </template>
-            <template slot="expand" slot-scope="props">
-              <v-container
-                fill-height
-                fluid
-                grid-list-xl>
-                <v-layout wrap>
-                  <v-flex>
-                    <material-card
-                      color="green"
-                      title="Purchase Details"
-                      text="Purchase history details"
-                    >
-                      <v-data-table
-                        :headers="DetailsHeader"
-                        :items="item"
-                      >
-                        <template
-                          slot="headerCell"
-                          slot-scope="{ header }"
-                        >
-                          <span
-                            class="font-weight-light text-warning text--darken-3"
-                            v-text="header.text"
-                          />
-                        </template>
-                        <template
-                          slot="items"
-                          slot-scope="props"
-                        >
-                          <td>{{props.item}}</td>
-                          <td>{{ props.item.product.name }}</td>
-                          <td class="text-xs-right">GH¢ {{ props.item.product.unit_price }}</td>
-                          <td class="text-xs-right">{{ props.item.product.quantity }}</td>
-                          <td class="text-xs-right">{{ props.item.reference }}</td>
-                        </template>
-                      </v-data-table>
-                    </material-card>
-                  </v-flex>
-                </v-layout>
-              </v-container>              
-            </template>            
+            <!-- <template slot="expand" slot-scope="props">
+              <v-card>
+                <v-flex xs12 class="">
+                  <span class="">Extra Details</span>
+                  <v-btn @click="resendHook(props.reference)" color="green" class="mb-2 add" dark fab outline>
+                    <i class="fas fa-redo-alt pa-2 cursor"></i>
+                    Resend Webhook
+                  </v-btn>                                           
+                </v-flex>
+              </v-card>          
+            </template>             -->
           </v-data-table>
+          <div class="text-xs-right pt-2">
+            <v-pagination 
+              v-model="pagination.page" 
+              :length="pages"
+              prev-icon="mdi-menu-left"
+              next-icon="mdi-menu-right"            
+            >
+            </v-pagination>
+          </div>           
         </material-card>
       </v-flex>
       <v-flex md12></v-flex>
@@ -80,105 +92,119 @@ import { mapGetters } from 'vuex'
 export default {
     name: 'Purchases',
     data: () => ({ 
-        snackbar: false,
-        message: 'This is a temp message',
-        color: 'success',
-        colors: [
-        'purple',
-        'info',
-        'success',
-        'warning',
-        'error'
-        ],     
-        dialog: false,
-        dialog1: false,
-        headers: [
+      hook: false,
+      expand: false,
+      pagination: {},
+      snackbar: false,
+      message: 'This is a temp message',
+      color: 'success',
+      colors: [
+      'purple',
+      'info',
+      'success',
+      'warning',
+      'error'
+      ],     
+      dialog: false,
+      dialog1: false,
+      headers: [
         {
-            sortable: false,
-            text: 'Purchase Ref.',
-            value: 'reference'
-        },
-        {
-            sortable: false,
-            text: 'Status',
-            value: 'status'
-        },
-        {
-            sortable: false,
-            text: 'Prev. Qty',
-            value: 'previous_quantity'
-        },               
-        {
-            sortable: false,
-            text: 'Current Qty',
-            value: 'current_quantity'
-        },
-        // {
-        //     sortable: false,
-        //     text: 'Remarks',
-        //     value: 'remarks',
-        // },
-        {
-            sortable: false,
-            text: 'Customer No.',
-            value: 'name'
-        },
-        {
-          sortable: false,
-          text: 'Product',
-          value: 'name'
-        },        
-        {
-            sortable: false,
-            text: 'Date',
-            value: 'date'
-        }        
-        ],
-        DetailsHeader: [
-        {
-          sortable: false,
           text: 'Purchase Ref.',
           value: 'reference'
         },
         {
-          sortable: false,
-          text: 'Previous Quantity',
-          value: 'previous_quantity'
+          text: 'Status',
+          value: 'status'
         },
         {
-          sortable: false,
-          text: 'Updated Quantity',
+          text: 'Prev. Qty',
+          value: 'previous_quantity'
+        },               
+        {
+          text: 'Current Qty',
           value: 'current_quantity'
         },
         {
-          sortable: false,
-          text: 'Remarks',
-          value: 'remarks',
-        },
-        {
-          sortable: false,
           text: 'Customer No.',
           value: 'name'
         },
         {
-          sortable: false,
-          text: 'Product',
-          value: 'phone'
+        text: 'Product',
+        value: 'name'
         },        
         {
-          sortable: false,
           text: 'Date',
           value: 'date'
-        }        
-        ],        
-        items: [
-        ],
-        product: [],
-        editedIndex: -1,
-        confirm: false,
+        },
+        {
+          text: '',
+          value: ''
+        }             
+      ],
+      DetailsHeader: [
+      {
+      text: 'Purchase Ref.',
+      value: 'reference'
+      },
+      {
+      text: 'Previous Quantity',
+      value: 'previous_quantity'
+      },
+      {
+      text: 'Updated Quantity',
+      value: 'current_quantity'
+      },
+      {
+      text: 'Remarks',
+      value: 'remarks',
+      },
+      {
+      text: 'Customer No.',
+      value: 'name'
+      },
+      {
+      text: 'Product',
+      value: 'phone'
+      },        
+      {
+      text: 'Date',
+      value: 'date'
+      }        
+      ],        
+      items: [
+      ],
+      product: [],
+      editedIndex: -1,
+      confirm: false,
+      search: ''
     }),
 
   methods: {
+    resendHook(ref) {
+      this.hook = true
+      let reference = {
+        'transact_ref': ref
+      }
+
+      this.$store.dispatch('sendHook', reference)
+      .then((response)=>{
+          if(response.data.success) {
+            this.color = 'success'
+            this.message = response.data.response.message
+            this.snackbar = true
+          } else {
+            this.message = response.data.response.message
+            this.color = 'warning'
+            this.snackbar = true
+          }
+      })
+      .catch((error)=>{
+        this.message = `${error}`
+        this.color = 'error'
+        this.snackbar = true        
+      })
+    },
+
     fetchPurchases (){
       this.$store.dispatch('getPurchases', {cache: false})
     },
@@ -294,8 +320,15 @@ export default {
 
     formTitle () {
       return this.editedIndex === -1 ? 'New Item' : 'Edit Item'
-    }    
+    },
+    pages () {
+      if (this.pagination.rowsPerPage == null || this.pagination.totalItems == null) 
+        return 0
+
+      return Math.ceil(this.pagination.totalItems / this.pagination.rowsPerPage)
+    }        
   },
+
   watch: {
     dialog (val) {
       val || this.close()
@@ -309,9 +342,5 @@ export default {
     position: relative;
     float: right;
     margin-right: 20px;
-}
-
-.v-dialog__container{
-  width: 100%;
 }
 </style>

@@ -2,13 +2,14 @@ import {
   GET_BASE_URI, LOGIN, SET_TOKEN, LOGOUT, SET_CLIENT,
   PRODUCTS_FETCH, SET_PRODUCTS_STATE, SET_PRODUCTS_META, SET_PRODUCTS, CREATE_PRODUCT, UPDATE_PRODUCT, DELETE_PRODUCT,
   PURCHASES_FETCH, SET_PURCHASES_STATE, SET_PURCHASES_META, SET_PURCHASES, CREATE_PURCHASE, UPDATE_PURCHASE, DELETE_PURCHASE,
-  SET_SUCCESSFUL_PURCHASES,SET_FIELDS_STATE,
+  SET_SUCCESSFUL_PURCHASES,SET_FIELDS_STATE, RESEND_WEBHOOK, 
   GET_FIELDS, SET_REPORT_STATE, SET_REPORT_FIELDS, SET_REPORT_FIELDS_STATE, 
   GENERATE_REPORTS, GET_REPORT, DOWNLOAD_REPORT, SET_DOWNLOAD_LINK,
   GET_BUCKET_FILE, AWS_BUCKET, ACCESS_KEY_ID, SECRET_ACCESS_KEY, SET_AWS_FILE,
   AGENTS_FETCH, SET_AGENTS, SET_AGENTS_STATE, SET_AGENTS_META, CREATE_AGENT, UPDATE_AGENT, DELETE_AGENT
 } from './store-constants'
 import { apiCall } from './apiCall'
+import axios from 'axios'
 import Utils from '../utils/services'
 import bus from '@/event-bus'
 var S3 = require('aws-sdk/clients/s3')
@@ -195,6 +196,50 @@ export default {
       })
     })
   }, 
+  [RESEND_WEBHOOK] ({ commit, rootGetters, dispatch }, reference) {
+    commit(SET_PURCHASES_STATE, 'LOADING')
+    return new Promise((resolve, reject) => {
+      axios({
+        url: `https://api.flopay.io/v1/rekt_transacts/resend/callback`,
+        method: 'POST',
+        token: rootGetters.token,
+        data: reference,
+        headers: {
+          'Ctl-Key': '5b1892ab46d583da4542d5951ccf6d38ec27a6a8a3f1e3d9bbeb730827731314'
+        },
+      })
+      .then((response) => {
+        commit(SET_PURCHASES_STATE, 'DATA')
+        // Post to callback to url
+        commit(SET_PURCHASES_STATE, 'LOADING')
+        if(response.data.response.data) {
+          return new Promise((resolve, reject) => {
+            axios({
+              url: `${response.data.response.data.transaction.callback_urls[0]}`,
+              method: 'POST',
+              data: response.data.response.data,
+            })
+            .then((response) => {
+              commit(SET_PURCHASES_STATE, 'DATA')
+              dispatch('getPurchases', {page: 1, cache: false})
+              resolve(response)
+            })
+            .catch((error) => {
+              commit(SET_PURCHASES_STATE, 'ERROR')
+              console.log(error)
+              reject(error)
+            })
+          }) 
+        } else 
+          resolve(response)
+      })
+      .catch((error) => {
+        commit(SET_PURCHASES_STATE, 'ERROR')
+        console.log(error)
+        reject(error)
+      })
+    })
+  },   
 
   // REPORTS
   [GET_FIELDS] ({ state, commit, rootGetters }, {cache = true} = {}) {
