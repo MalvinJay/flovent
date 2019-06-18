@@ -4,7 +4,7 @@ import {
   PURCHASES_FETCH, SET_PURCHASES_STATE, SET_PURCHASES_META, SET_PURCHASES, CREATE_PURCHASE, UPDATE_PURCHASE, DELETE_PURCHASE,
   SET_SUCCESSFUL_PURCHASES,SET_FIELDS_STATE, RESEND_WEBHOOK, 
   GET_FIELDS, SET_REPORT_STATE, SET_REPORT_FIELDS, SET_REPORT_FIELDS_STATE, 
-  GENERATE_REPORTS, GET_REPORT, DOWNLOAD_REPORT, SET_DOWNLOAD_LINK,
+  NEW_GENERATE_REPORTS, GENERATE_REPORTS, GET_REPORT, DOWNLOAD_REPORT, SET_DOWNLOAD_LINK,
   GET_BUCKET_FILE, AWS_BUCKET, ACCESS_KEY_ID, SECRET_ACCESS_KEY, SET_AWS_FILE,
   AGENTS_FETCH, SET_AGENTS, SET_AGENTS_STATE, SET_AGENTS_META, CREATE_AGENT, UPDATE_AGENT, DELETE_AGENT
 } from './store-constants'
@@ -293,7 +293,7 @@ export default {
         reject(error)
       })
     })
-  }, 
+  },
   [GET_REPORT] ({ state, commit, rootGetters, dispatch }, jobId = state.fields.job_id) {
     return new Promise((resolve, reject) => {
       apiCall({
@@ -404,6 +404,36 @@ export default {
       })
     })
   }, 
+  [NEW_GENERATE_REPORTS] ({ state, commit, rootGetters, dispatch }, params) {
+    var query = Utils.createQueryFromObject(params)
+    return new Promise((resolve, reject) => {
+      apiCall({
+        url: `${GET_BASE_URI}v1/reports/index?${query}`,
+        method: 'GET',
+        token: rootGetters.token
+      })
+      .then((response) => {
+        if (response.data.response.data.done) {
+          // commit(SET_DOWNLOAD_LINK, response.data.response.data.file_name)
+          // bus.$emit('toggleDownload')    
+
+          resolve(response)
+        } else {
+          reject(response)
+          setTimeout(() => {
+            dispatch(GET_REPORT, jobId)
+              .then((response) => {
+                resolve(response)
+              }).catch((error) => {
+                reject(error)
+              })
+          }, 5000)
+        }
+      }).catch((error) => {
+        reject(error)
+      })
+    })
+  },
   
   // AGENTS
   [AGENTS_FETCH] ({ state, commit, rootGetters }, {page = 1, cache = true} = {}) {

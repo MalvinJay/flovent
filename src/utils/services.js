@@ -127,40 +127,45 @@ export default {
   },
   createExportQuery (form) {
     var query = 'file_type=csv'
+
     if (this.present(form.from)) {
-      query = query += `&start_date=${form.from}`
+      query = query += `&from=${form.from}`
     }
+
     if (this.present(form.to)) {
-      query = query += `&end_date=${form.to}`
+      query = query += `&to=${form.to}`
     }
-    if (this.present(form.cash_flow)) {
-      query = query += `&cash_flow=${form.cash_flow}`
-    }
+
+    // if (this.present(form.cash_flow)) {
+    //   query = query += `&cash_flow=${form.cash_flow}`
+    // }
+
     if (this.present(form.fields)) {
       if (form.fields.length === 1) {
-        query = query += `&fields[]=${form.fields}`
+        query += `&fields[]=${form.fields}`
       } else {
-        var q = form.fields.split(',')
-        q.forEach(element => {
-          query = query += `&fields[]=${element}`
+        form.fields.map((element)=>{
+          query += `&fields[]=${element}`
         })
       }
-    //   query = query += `&fields[]=${form.fields}`
     }
-    if (this.present(form.payment_types)) {
-      if (form.payment_types.length === 1) {
-        query = query += `&payment_types[]=${form.payment_types}`
-      } else {
-        var w = form.payment_types
-        w.forEach(element => {
-          query = query += `&payment_types[]=${element}`
-        })
-      }
+
+    // if (this.present(form.payment_types)) {
+    //   if (form.payment_types.length === 1) {
+    //     query = query += `&payment_types[]=${form.payment_types}`
+    //   } else {
+    //     var w = form.payment_types
+    //     w.forEach(element => {
+    //       query = query += `&payment_types[]=${element}`
+    //     })
+    //   }
 
     //   query = query += `&payment_types[]=${form.payment_types.join(',')}`
-    }
+    // }
+
     return query
   },
+  
   createQueryParams (filters, page = 1) {
     var query = `?page=${page}&limit=12`
     if (this.present(filters)) {

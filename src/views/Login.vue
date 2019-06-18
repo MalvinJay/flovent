@@ -15,7 +15,8 @@
 
                         <v-flex class="login-form text-xs-center"> 
                             <div class="display-2 mb-3" style="color: #fff">
-                            Flopay Inventory
+                            <!-- Flopay Inventory -->
+                            VentIT
                             </div>
                             <v-card light="light">
                             <v-card-text>

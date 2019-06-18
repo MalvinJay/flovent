@@ -23,16 +23,16 @@
                   <v-layout align-center>
                     <div class="d-flex justify-space-around px-2">
                       <div>
-                        <v-btn class="base-color" flat small>Today</v-btn>
+                        <v-btn class="base-color" :flat="selected" small @click="toggleSelected('today')">Today</v-btn>
                       </div>
                       <div>
-                        <v-btn class="base-color" flat small>Last week</v-btn>
+                        <v-btn class="base-color" :flat="selected" small @click="toggleSelected('last_week')">Last week</v-btn>
                       </div>
                       <div>
-                        <v-btn class="base-color" flat small>A month </v-btn>
+                        <v-btn class="base-color" :flat="selected" small @click="toggleSelected('last_month')" >A month </v-btn>
                       </div>
                       <div>
-                        <v-btn class="base-color" flat small>1 Year </v-btn>
+                        <v-btn class="base-color" :flat="selected" small @click="toggleSelected('last year')">1 Year </v-btn>
                       </div>
                     </div>
                   </v-layout>
@@ -68,7 +68,7 @@
                               </v-text-field>
                               <v-date-picker v-model="from" no-title scrollable color="green" dark>
                                 <v-spacer></v-spacer>
-                                <v-btn raised  @click="menu = false" color="base-color">Cancel</v-btn>
+                                <v-btn outline  @click="menu = false" color="base-color">Cancel</v-btn>
                                 <v-btn raised  @click="$refs.menu.save(date)" color="base-background">OK</v-btn>
                               </v-date-picker>
                             </v-menu>
@@ -100,7 +100,7 @@
                               </v-text-field>
                               <v-date-picker v-model="to" no-title scrollable color="green" dark>
                                 <v-spacer></v-spacer>
-                                <v-btn raised  @click="menu1 = false" color="base-color">Cancel</v-btn>
+                                <v-btn outline @click="menu1 = false" color="base-color">Cancel</v-btn>
                                 <v-btn raised  @click="$refs.menu1.save(date)" color="base-background">OK</v-btn>                             
                               </v-date-picker>
                             </v-menu>
@@ -176,12 +176,12 @@
                             >
                               <v-text-field
                                 slot="activator"
-                                v-model="reportFrom"
+                                v-model="form.from"
                                 label="From"
                                 readonly
                               >
                               </v-text-field>
-                              <v-date-picker v-model="reportFrom" no-title scrollable color="green" dark>
+                              <v-date-picker v-model="form.from" no-title scrollable color="green" dark>
                                 <v-spacer></v-spacer>
                                 <v-btn outline  @click="menu2 = false" color="base-color">Cancel</v-btn>
                                 <v-btn raised  @click="$refs.menu2.save(date)" color="base-background">OK</v-btn>
@@ -208,12 +208,12 @@
                             >
                               <v-text-field
                                 slot="activator"
-                                v-model="reportTo"
+                                v-model="form.to"
                                 label="To"
                                 readonly
                               >
                               </v-text-field>
-                              <v-date-picker v-model="reportTo" no-title scrollable color="green" dark>
+                              <v-date-picker v-model="form.to" no-title scrollable color="green" dark>
                                 <v-spacer></v-spacer>
                                 <v-btn outline @click="menu3 = false" color="base-color">Cancel</v-btn>
                                 <v-btn raised  @click="$refs.menu3.save(date)" color="base-background">OK</v-btn>
@@ -235,12 +235,12 @@
                           <v-layout row wrap>
                             <v-flex xs12 md6>
                               <v-radio-group v-model="Reportrow">
-                                <v-checkbox v-model="fl" v-for="(field, index) in reportFields.slice(0, 4)" :key="index" :label="field.name" :value="field.key" color="success" class="s-10"></v-checkbox>
+                                <v-checkbox v-model="form.fields" v-for="(field, index) in reportFields.slice(0, 4)" :key="index" :label="field.name" :value="field.key" color="success" class="s-10"></v-checkbox>
                               </v-radio-group>
                             </v-flex>
                             <v-flex xs12 md6>
                               <v-radio-group v-model="Reportrow">
-                                <v-checkbox v-model="fl" v-for="(field, index) in reportFields.slice(5, 9)" :key="index" :label="field.name" :value="field.key" color="success" class="s-10"></v-checkbox>
+                                <v-checkbox v-model="form.fields" v-for="(field, index) in reportFields.slice(5, 9)" :key="index" :label="field.name" :value="field.key" color="success" class="s-10"></v-checkbox>
                               </v-radio-group>   
                             </v-flex> 
                           </v-layout>             
@@ -252,18 +252,24 @@
                 <div class="footer border-top">
                   <v-layout align-center>
                     <div class="justify-content-end px-2 w-100" style="display:flex;">
-                      <!-- <div>
-                        <v-btn @click="report = false" class="base-color" raised small>Clear</v-btn>
-                      </div> -->
-                      <div v-if="download" style="display: flex;align-items: center;">
-                        <!-- <v-btn @click="downloadReport" color="base-background" raised small :loading="loading">Download Report</v-btn> -->
-                        <a :href="`${GET_BASE_URI}v1/accounts/download?file_name=${link}`" class="base-background white-text pa-2 s-13" target="_blank" style="border: none">Download Report</a>
-                      </div> 
+                      <!-- 
+                        <div>
+                          <v-btn @click="report = false" class="base-color" raised small>Clear</v-btn>
+                        </div> 
+                      -->
 
-                      <div v-else>
-                        <v-btn @click="generate" color="base-background" raised small :loading="loading">Generate Report</v-btn>
+                      <!-- 
+                        <div v-if="download" style="display: flex;align-items: center;">
+                          <v-btn @click="downloadReport" color="base-background" raised small :loading="loading">Download Report</v-btn>
+                          <a :href="`${GET_BASE_URI}v1/accounts/download?file_name=${link}`" class="base-background white-text pa-2 s-13" target="_blank" style="border: none">Download Report</a>
+                      </div>  
+                      -->
+
+                      <div>
+                        <a :href="`${GET_BASE_URI}reports/index?token=${token}&${generateQueryParams}`" class="base-background white-text pa-2 s-13" target="_blank" style="border: none">Generate Report</a>
+                        <!-- <v-btn @click="generate" color="base-background" raised small :loading="loading">Generate Report</v-btn> -->
                       </div>
-                    </div>
+                    </div>  
                   </v-layout>                  
                 </div>
               </v-list>
@@ -292,8 +298,10 @@
 <script>
 import { mapGetters } from 'vuex'
 import EventBus from '@/event-bus.js'
-var S3 = require('aws-sdk/clients/s3')
 import { GET_BASE_URI } from '@/store/store-constants'
+import Utils from '@/utils/services'
+var S3 = require('aws-sdk/clients/s3')
+
 export default {
   inheritAttrs: false,
   props: {
@@ -363,8 +371,12 @@ export default {
       menu3: false,
       Reportrow: null,
       Filters: null,
-      form: {},
-
+      form: {
+        from: "",
+        to: "",
+        fields: [] 
+      },
+      selected: false,
       GET_BASE_URI: GET_BASE_URI
     }
   },
@@ -380,7 +392,8 @@ export default {
       fieldsState: 'fieldsState',
       link: 'downloadLink',
       token: 'token',
-      awsFile: 'awsFile'
+      awsFile: 'awsFile',
+      token: 'token'
     }),
 
     reportFields() {
@@ -404,6 +417,10 @@ export default {
         marginBottom: `${this.offset}px`,
         marginTop: `${this.offset * 2}px`
       }
+    },
+    generateQueryParams() {
+      console.log('Query Params:', Utils.createExportQuery(this.form))
+      return Utils.createExportQuery(this.form)
     }
   },
   
@@ -444,7 +461,8 @@ export default {
         fields: this.fl
       }
 
-      this.$store.dispatch('generateReports', this.form)
+      // this.$store.dispatch('generateReports', this.form)
+      this.$store.dispatch('newGenerateReports', this.form)
       .then((response) => {
         console.log('Success:', response)
       })
@@ -455,6 +473,9 @@ export default {
     downloadReport() {
       // this.$store.dispatch('downloadReport')
       this.$store.dispatch('getBucketFile')
+    },
+    toggleSelected(){
+      
     }
   }
 }

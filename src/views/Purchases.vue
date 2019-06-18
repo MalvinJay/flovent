@@ -21,15 +21,16 @@
             <v-spacer></v-spacer>
 
           </v-card-title>
-
+            <!-- 
+            hide-actions
+            :pagination.sync="pagination"   
+            :expand="expand"
+             -->
           <v-data-table 
             :headers="headers" 
             :items="filteredProducts" 
             :loading="loading"
-            :search="search"
-            hide-actions
-            :pagination.sync="pagination"   
-            :expand="expand"        
+            :search="search"        
           >
             <template slot="headerCell" slot-scope="{ header }">
               <span class="subheading font-weight-light text-success text--darken-3" v-text="header.text"/>
@@ -52,24 +53,26 @@
                     </template>
                     <span>Resend Webhook</span>
                   </v-tooltip> 
-                  -->
+                -->
                   <i v-if="props.item.status === 'pending'" @click="resendHook(props.item.reference)" class="fas fa-redo-alt pa-2 cursor"></i>
                   <!-- <v-icon>fas fa-circle-notch fa-spin</v-icon> -->
                   <!-- <i v-if="hook" class="fa-circle-notch fa-spin fas theme--light"></i> -->
                 </td>                
               </tr>
             </template>
-            <!-- <template slot="expand" slot-scope="props">
-              <v-card>
-                <v-flex xs12 class="">
-                  <span class="">Extra Details</span>
-                  <v-btn @click="resendHook(props.reference)" color="green" class="mb-2 add" dark fab outline>
-                    <i class="fas fa-redo-alt pa-2 cursor"></i>
-                    Resend Webhook
-                  </v-btn>                                           
-                </v-flex>
-              </v-card>          
-            </template>             -->
+            <!-- 
+              <template slot="expand" slot-scope="props">
+                <v-card>
+                  <v-flex xs12 class="">
+                    <span class="">Extra Details</span>
+                    <v-btn @click="resendHook(props.reference)" color="green" class="mb-2 add" dark fab outline>
+                      <i class="fas fa-redo-alt pa-2 cursor"></i>
+                      Resend Webhook
+                    </v-btn>                                           
+                  </v-flex>
+                </v-card>          
+              </template> 
+            -->
           </v-data-table>
           <div class="text-xs-right pt-2">
             <v-pagination 

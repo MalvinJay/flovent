@@ -1,5 +1,5 @@
 export const GET_BASE_URI = 'https://inventroy-box.herokuapp.com/'
-// export const GET_BASE_URI = 'https://b9101ba5.ngrok.io/'
+// export const GET_BASE_URI = 'https://529f7072.ngrok.io/'
     
 // user
 export const AUTH_REQUEST = 'getToken'
@@ -41,6 +41,7 @@ export const GET_FIELDS = 'getReportFields'
 export const SET_REPORT_FIELDS = 'setReportFields'
 export const SET_REPORT_STATE = 'setReportState'
 export const SET_REPORT_FIELDS_STATE = 'setReportFieldsState'
+export const NEW_GENERATE_REPORTS = 'newGenerateReports'
 export const GENERATE_REPORTS = 'generateReports'
 export const DOWNLOAD_REPORT = 'downloadReport'
 export const GET_REPORT = 'getReport'

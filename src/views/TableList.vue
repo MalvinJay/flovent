@@ -124,7 +124,6 @@ import moment from 'moment'
 export default {
   data: () => ({ 
     pagination: {},
-    snackbar: false,
     message: 'This is a temp message',
     color: 'success',
     colors: [

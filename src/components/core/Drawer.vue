@@ -29,7 +29,7 @@
             />
           </v-list-tile-avatar>
           <v-list-tile-title class="title">
-            FloVent
+            VentIT
           </v-list-tile-title>
         </v-list-tile>
         <v-divider/>
@@ -70,7 +70,7 @@ import {
 
 export default {
   data: () => ({
-    logo: './img/logo.png',
+    logo: './img/logo.jpg',
     links: [
       {
         to: '/dashboard',
