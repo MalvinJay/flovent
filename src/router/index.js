@@ -42,9 +42,6 @@ Vue.use(Router)
 // Create a new router
 const router = new Router({
   mode: 'history',
-  // routes: paths.map(path => route(path.path, path.view, path.name)).concat([
-  //   { path: '*', redirect: '/dashboard' },
-
   routes: [
     {
       path: '/',
@@ -137,25 +134,28 @@ if (process.env.GOOGLE_ANALYTICS) {
   })
 }
 
-router.beforeEach((to, from, next) => {
-  if (to.matched.some(record => record.meta.requiresAuth)) {
-    if (localStorage.getItem('token') === '' || localStorage.getItem('token') === null) {
-      next({
-        path: '/login',
-        params: { nextUrl: to.fullPath }
-      })
-    } else {
-      next()
-    }
-  } else if (to.matched.some(record => record.meta.guest)) {
-    if (localStorage.getItem('token') === '' || localStorage.getItem('token') === null) {
-      next()
-    } else {
-      next({ name: 'Dashboard' })
-    }
-  } else {
-    next()
-  }
-})
+// router.beforeEach((to, from, next) => {
+//   console.log('from:', from)
+//   console.log('to:', to)
+  
+//   if (to.matched.some(record => record.meta.requiresAuth)) {
+//     if (localStorage.getItem('token') === '' || localStorage.getItem('token') === null) {
+//       next({
+//         path: '/login',
+//         params: { nextUrl: to.fullPath }
+//       })
+//     } else {
+//       next()
+//     }
+//   } else if (to.matched.some(record => record.meta.guest)) {
+//     if (localStorage.getItem('token') === '' || localStorage.getItem('token') === null) {
+//       next()
+//     } else {
+//       next({ name: 'Dashboard' })
+//     }
+//   } else {
+//     next()
+//   }
+// })
 
 export default router

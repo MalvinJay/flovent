@@ -1,5 +1,5 @@
-export const GET_BASE_URI = 'https://inventroy-box.herokuapp.com/'
-// export const GET_BASE_URI = 'https://529f7072.ngrok.io/'
+// export const GET_BASE_URI = 'https://inventroy-box.herokuapp.com/'
+export const GET_BASE_URI = 'https://85f2e0fd484e.ngrok.io/'
     
 // user
 export const AUTH_REQUEST = 'getToken'
@@ -31,6 +31,7 @@ export const SET_PURCHASES = 'setPurchases'
 export const SET_PURCHASES_STATE = 'setPurchasesState'
 export const SET_SUCCESSFUL_PURCHASES = 'setSuccessfulPurchase'
 export const SET_PURCHASES_META = 'setPurchasesMeta'
+export const SET_PURCHASES_FILTERS = 'setPurchasesFilter'
 export const CREATE_PURCHASE = 'createPurchase'
 export const UPDATE_PURCHASE = 'updatePurchase'
 export const DELETE_PURCHASE = 'deletePurchase'

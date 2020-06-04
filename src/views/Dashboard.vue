@@ -56,15 +56,13 @@
             <v-spacer></v-spacer>     
 
           </v-card-title>
-<!--             hide-actions
-            :pagination.sync="pagination"
-             -->
+          
           <v-data-table
             :headers="headers"
             :items="filteredProducts"
             :loading="loading"
             :search="search"
- 
+            :pagination.sync="pagination"
           >
             <v-progress-linear slot="progress" color="blue" indeterminate></v-progress-linear>
             <template
@@ -95,7 +93,8 @@
               v-model="pagination.page" 
               :length="pages"
               prev-icon="mdi-menu-left"
-              next-icon="mdi-menu-right"               
+              next-icon="mdi-menu-right"   
+              circle            
               >
               </v-pagination>
           </div>          

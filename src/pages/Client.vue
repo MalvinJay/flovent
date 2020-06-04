@@ -17,7 +17,7 @@ export default {
   },
   mounted() {
     if (!this.$session.exists()) {
-      this.logout()
+      // this.logout()
     }    
   },
   methods: {

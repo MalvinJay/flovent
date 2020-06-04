@@ -112,7 +112,8 @@
               v-model="pagination.page" 
               :length="pages"
               prev-icon="mdi-menu-left"
-              next-icon="mdi-menu-right"               
+              next-icon="mdi-menu-right" 
+              circle           
               >
               </v-pagination>
           </div>           

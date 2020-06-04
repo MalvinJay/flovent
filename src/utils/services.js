@@ -117,7 +117,8 @@ export default {
         return 7
     }
   },
-  //   create query out of object
+
+  //create query out of object
   createQueryFromObject (obj) {
     var query = ''
     Object.keys(obj).forEach(function (key) {
@@ -167,43 +168,27 @@ export default {
   },
   
   createQueryParams (filters, page = 1) {
-    var query = `?page=${page}&limit=12`
+    var query = `?page=${page}&limit=20`
+
     if (this.present(filters)) {
       if (this.present(filters.from) && this.present(filters.to)) {
         query = query + `&from=${filters.from}&to=${filters.to}`
       }
-      if (this.present(filters.payment_types)) {
-        query = query + `&payment_types[]=${filters.payment_types}`
+      if (this.present(filters.status)) {
+        filters.status.map((el)=>{
+          query = query + `&status[]=${el}`
+        })
+        // query = query + `&status[]=${filters.status}`
+      }    
+      if (this.empty(filters.from) && this.empty(filters.to) && this.empty(filters.status)) {
+        query = query
       }
-      if (this.present(filters.statuses)) {
-        query = query + `&statuses[]=${filters.statuses}`
-      }
-      if (this.present(filters.search_value)) {
-        query = query + `&search_value=${filters.search_value}`
-      }
-      if (this.present(filters.time_interval)) {
-        query = query + `&time_interval=${filters.time_interval}`
-      }
-      if (this.present(filters.cash_flow)) {
-        query = query + `&cash_flow=${filters.cash_flow}`
-      }
-      if (this.present(filters.reasons)) {
-        query = query + `&reasons[]=${filters.reasons}`
-      } 
-      if (this.present(filters.name)) {
-        query = query + `&user_group=${filters.name}`
-      }            
-      if (this.empty(filters.from) && 
-          this.empty(filters.to) && 
-          this.empty(filters.payment_types) && 
-          this.empty(filters.statuses) && 
-          this.empty(filters.reasons) && 
-          this.empty(filters.name)) {
-        query = query + '&all=true'
-      }
-    } else {
-      query = query + '&all=true'
+    } 
+    else {
+      query = query
     }
+    
+    console.log("Final Query:", query)
     return query
   },
   createPendingParams (filters, page = 1) {

@@ -34,7 +34,12 @@ export default {
     data: [],
     state: 'LOADING',
     meta: {},
-    successful: '0'
+    successful: '0',
+    filters: {
+      from: '',
+      to: '',
+      status: []
+    }
   },
 
   // Reports

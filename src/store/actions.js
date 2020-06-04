@@ -2,7 +2,7 @@ import {
   GET_BASE_URI, LOGIN, SET_TOKEN, LOGOUT, SET_CLIENT,
   PRODUCTS_FETCH, SET_PRODUCTS_STATE, SET_PRODUCTS_META, SET_PRODUCTS, CREATE_PRODUCT, UPDATE_PRODUCT, DELETE_PRODUCT,
   PURCHASES_FETCH, SET_PURCHASES_STATE, SET_PURCHASES_META, SET_PURCHASES, CREATE_PURCHASE, UPDATE_PURCHASE, DELETE_PURCHASE,
-  SET_SUCCESSFUL_PURCHASES,SET_FIELDS_STATE, RESEND_WEBHOOK, 
+  SET_SUCCESSFUL_PURCHASES, SET_PURCHASES_FILTERS, SET_FIELDS_STATE, RESEND_WEBHOOK, 
   GET_FIELDS, SET_REPORT_STATE, SET_REPORT_FIELDS, SET_REPORT_FIELDS_STATE, 
   NEW_GENERATE_REPORTS, GENERATE_REPORTS, GET_REPORT, DOWNLOAD_REPORT, SET_DOWNLOAD_LINK,
   GET_BUCKET_FILE, AWS_BUCKET, ACCESS_KEY_ID, SECRET_ACCESS_KEY, SET_AWS_FILE,
@@ -122,6 +122,16 @@ export default {
     var query = `?page=${page}&limit=20`
     let count = 0;
 
+    var filters = state.purchases.filters
+
+    if (Utils.empty(filters)) {
+      console.log('Filters are empty!!!!!')
+      query = query
+    } else {
+      // query = query + `?&start_date=${filters.from}&end_date=${filters.to}`
+      query = Utils.createQueryParams(filters)
+    }
+
     commit(SET_PURCHASES_STATE, 'LOADING')
     if (cache && state.purchases.data.length !== 0) {
       commit(SET_PURCHASES_STATE, 'DATA')
@@ -239,7 +249,10 @@ export default {
         reject(error)
       })
     })
-  },   
+  }, 
+  [SET_PURCHASES_FILTERS] ({commit }, form) {
+    commit(SET_PURCHASES_FILTERS, form)
+  },
 
   // REPORTS
   [GET_FIELDS] ({ state, commit, rootGetters }, {cache = true} = {}) {

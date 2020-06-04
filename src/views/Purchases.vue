@@ -15,29 +15,29 @@
               icon="mdi-meteor"
               label="Search"
               single-line
-              hide-details
-            >
+              hide-details>
             </v-text-field>
             <v-spacer></v-spacer>
 
           </v-card-title>
-            <!-- 
-            hide-actions
-            :pagination.sync="pagination"   
-            :expand="expand"
-             -->
           <v-data-table 
             :headers="headers" 
             :items="filteredProducts" 
             :loading="loading"
-            :search="search"        
+            :search="search"
+            :pagination.sync="pagination"
           >
             <template slot="headerCell" slot-scope="{ header }">
               <span class="subheading font-weight-light text-success text--darken-3" v-text="header.text"/>
             </template>
+
             <v-progress-linear slot="progress" color="blue" indeterminate></v-progress-linear>
             <template slot="items" slot-scope="props">
-              <tr @click="props.expanded = !props.expanded">
+                  <!--  {pend: props.item.status === 'pending'}, {confirm: props.item.status === 'confirmation required'} -->
+              <tr 
+                @click="props.expanded = !props.expanded"
+                :class="[{fail: props.item.status === 'failed'},{'bold-600': props.item.status === 'paid'}]"
+                >
                 <td>{{ props.item.reference }}</td>
                 <td>{{ props.item.status }}</td>
                 <td>{{ props.item.previous_quantity }}</td>
@@ -54,9 +54,10 @@
                     <span>Resend Webhook</span>
                   </v-tooltip> 
                 -->
-                  <i v-if="props.item.status === 'pending'" @click="resendHook(props.item.reference)" class="fas fa-redo-alt pa-2 cursor"></i>
-                  <!-- <v-icon>fas fa-circle-notch fa-spin</v-icon> -->
-                  <!-- <i v-if="hook" class="fa-circle-notch fa-spin fas theme--light"></i> -->
+                  <i v-if="props.item.status === 'pending' || props.item.status === 'confirmation required'" @click="resendHook(props.item.reference)" class="fas fa-redo-alt pa-2 cursor"></i> 
+                  <!-- <i v-if="props.item.status === 'confirmation required'" @click="resendHook(props.item.reference)" class="fas fa-redo-alt pa-2 cursor"></i>  -->
+                  <!-- <v-icon>fas fa-circle-notch fa-spin</v-icon> --> 
+                  <!-- <i v-if="hook" class="fa-circle-notch fa-spin fas theme--light"></i> --> 
                 </td>                
               </tr>
             </template>
@@ -79,7 +80,12 @@
               v-model="pagination.page" 
               :length="pages"
               prev-icon="mdi-menu-left"
-              next-icon="mdi-menu-right"            
+              next-icon="mdi-menu-right" 
+              :total-visible="7"
+              @next="nextItem"
+              @previous="previousItem"
+              input
+              circle
             >
             </v-pagination>
           </div>           
@@ -97,7 +103,12 @@ export default {
     data: () => ({ 
       hook: false,
       expand: false,
-      pagination: {},
+      pagination: {
+        descending: true,
+        // page: 1,
+        // rowsPerPage: 20,
+        // totalItems: total
+      },
       snackbar: false,
       message: 'This is a temp message',
       color: 'success',
@@ -247,7 +258,7 @@ export default {
       }
     },    
     
-    close () {
+    close (){
       this.dialog = false
       this.dialog1 = false
 
@@ -257,7 +268,7 @@ export default {
       }, 300)
     }, 
       
-    save () {
+    save (){
       if (this.editedIndex > -1) {
         // Object.assign(this.product[this.editedIndex], this.editedItem)
         console.log('what is this', this.product[this.editedIndex])
@@ -299,10 +310,20 @@ export default {
     
     clickRow(id){
       this.$router.push(`/purchases/${id}`)
+    },
+
+    nextItem(val) {
+      console.log('Moving to the next item:', val)
+
+    },
+
+    previousItem(val) {
+      console.log('Moving to the previous item:', val)
+
     }
   },
 
-  created(){
+  created() {
     this.$store.dispatch('getPurchases')
   },
 
@@ -311,7 +332,7 @@ export default {
       purchases: 'purchases',
       state: 'purchasesState',
       meta: 'purchasesMeta'
-    }), 
+    }),
 
     filteredProducts() {
       return this.purchases
@@ -324,12 +345,29 @@ export default {
     formTitle () {
       return this.editedIndex === -1 ? 'New Item' : 'Edit Item'
     },
-    pages () {
+    pages() {
       if (this.pagination.rowsPerPage == null || this.pagination.totalItems == null) 
         return 0
 
       return Math.ceil(this.pagination.totalItems / this.pagination.rowsPerPage)
-    }        
+    },
+    total() {
+      return this.meta.totalCount
+    },
+    paginate() {
+      return {
+        descending: true,
+        page: this.meta.page,
+        rowsPerPage: this.meta.limit,
+        totalItems: this.meta.totalCount
+      }
+    },
+    failed() {
+      
+    },
+    pending() {
+
+    }
   },
 
   watch: {
@@ -345,5 +383,15 @@ export default {
     position: relative;
     float: right;
     margin-right: 20px;
+}
+
+.fail {
+  color: red
+}
+.pend {
+  color: orange;
+}
+.confirm {
+  color: rgb(116, 45, 45);
 }
 </style>

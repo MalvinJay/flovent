@@ -28,7 +28,7 @@
 
     <!-- Save a new Item or Edit an item -->
       <v-flex md12>
-        <material-card color="green" title="Products" text="A list of products" :filter="true" page="products">
+        <material-card color="green" title="Products" text="A list of products" :filter="false" page="products">
           <v-card-title class="pa-0 pb-4">
             <v-text-field
               v-model="search"
@@ -108,7 +108,8 @@
               v-model="pagination.page" 
               :length="pages"
               prev-icon="mdi-menu-left"
-              next-icon="mdi-menu-right"               
+              next-icon="mdi-menu-right"  
+              circle             
               >
               </v-pagination>
           </div>          
