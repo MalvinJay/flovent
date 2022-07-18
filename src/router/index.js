@@ -116,23 +116,22 @@ const router = new Router({
     }
     return { x: 0, y: 0 }
   }
-})
-
+});
 
 Vue.use(Meta)
 
 // Bootstrap Analytics
 // Set in .env
 // https://github.com/MatteoGabriele/vue-analytics
-if (process.env.GOOGLE_ANALYTICS) {
-  Vue.use(VueAnalytics, {
-    id: process.env.GOOGLE_ANALYTICS,
-    router,
-    autoTracking: {
-      page: process.env.NODE_ENV !== 'development'
-    }
-  })
-}
+// if (process.env.GOOGLE_ANALYTICS) {
+//   Vue.use(VueAnalytics, {
+//     id: process.env.GOOGLE_ANALYTICS,
+//     router,
+//     autoTracking: {
+//       page: process.env.NODE_ENV !== 'development'
+//     }
+//   })
+// }
 
 // router.beforeEach((to, from, next) => {
 //   console.log('from:', from)
